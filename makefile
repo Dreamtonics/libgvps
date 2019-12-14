@@ -1,15 +1,19 @@
 
 PREFIX=/usr
+CC ?= gcc
+AR ?= ar
 
-export FP_TYPE ?= float
+FP_TYPE ?= float
 CONFIG = Debug
 
-#CC = clang-3.5
-CC = $(CROSS)gcc
-AR = $(CROSS)ar
 CFLAGS_COMMON = -DFP_TYPE=$(FP_TYPE) -std=c99 -Wall -fPIC $(CFLAGSEXT)
-CFLAGS_DBG = $(CFLAGS_COMMON) -Og -g
-CFLAGS_REL = $(CFLAGS_COMMON) -Ofast
+ifeq ($(CXX), emcc)
+  CFLAGS_DBG = $(CFLAGS_COMMON) -O1 -g -D_DEBUG
+  CFLAGS_REL = $(CFLAGS_COMMON) -O3
+else
+  CFLAGS_DBG = $(CFLAGS_COMMON) -Og -g -D_DEBUG
+  CFLAGS_REL = $(CFLAGS_COMMON) -Ofast
+endif
 ifeq ($(CONFIG), Debug)
   CFLAGS = $(CFLAGS_DBG)
 else
